@@ -22,6 +22,7 @@ void count_pixels_and_lines_thread(void);
 void save_image1(void);
 void sendImage();
 void testMemoryAndCamera();
+configureMirroredImage();
 
 void delay(int delay){
     timer t;
@@ -154,14 +155,19 @@ void save_image1(void) {
 void cameraConfig() {
     ///////////clock setup
     //char data[1] = {0b10001111}; // puts a divider on clock (fps = 1)
-    char data[1] = {0b10001111}; // fps = 3
+    char data[1] = {0b10000011}; // fps = 3
     i2c_master_write_reg(0x21,0x11,data,1,i2c_if);
     data[0] = 0b00000000; // default yuv mode
     i2c_master_write_reg(0x21,0x12,data,1,i2c_if);
     data[0] = 0xC0; // default 16bit mode
     i2c_master_write_reg(0x21,0x40,data,1,i2c_if);
-    delay(50000000);
     ///////////end clock setup
+}
+
+void configureMirroredImage() {
+    char data[1] = {0b00110000}; // flip image
+    i2c_master_write_reg(0x21,0x1E,data,1,i2c_if);
+    delay(50000000);
 }
 
 void count_pixels_and_lines_thread(void) {
@@ -204,7 +210,7 @@ void count_pixels_and_lines_thread(void) {
         case VSYNC when pinseq(1) :> void: // when VSYNC goes high again - end of picture
             countingLines = 0;
             printf("lines = %d\n",lines);
-            for(int i = 400; i < 401; i++) {
+            for(int i = 0; i < 1; i++) {
                 printf("pixelsPerLine[%d] = %d\n",i,pixelsPerLine[i]);
             }
             break;

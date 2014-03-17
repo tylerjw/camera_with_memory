@@ -1,0 +1,14 @@
+Build error at current version:
+
+**** Build of configuration Debug for project camera_with_memory ****
+
+xmake CONFIG=Debug all 
+Creating dependencies for point.xc
+Compiling point.xc
+xcc1: internal compiler error
+Failed in /build/swnb/autobuild/swview/MacOSX/build/sb/tools_xcc1_c_llvm/BackEnd/LLVM/llvmgen.c, line 9314
+  isExpVar(d->components->u.dimension)
+For bug reporting instructions, please see:
+http://www.xmos.com/support
+xmake[1]: *** [.build_Debug/src/point.xc.o] Error 1
+xmake: *** [bin/Debug/camera_with_memory_Debug.xe] Error 2

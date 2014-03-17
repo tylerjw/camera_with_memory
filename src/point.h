@@ -44,8 +44,11 @@ int point_finder(int center_points[length][2], static const unsigned int length)
  * @param col_idx_size      size of col_idx array
  * @returns number of columns
  *
- * NOT IMPLEMENTED
+ *
 */
-//int sort_by_col(int (*center_points)[2], int num_points, int* col_idx, int col_idx_size);
+/*
+int sort_by_col(int center_points[num_points][2], static const unsigned int num_points,
+        int col_idx[col_idx_size], static const unsigned int col_idx_size);
+*/
 
 #endif /* POINT_H_ */

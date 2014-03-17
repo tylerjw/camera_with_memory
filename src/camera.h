@@ -31,4 +31,11 @@ void count_pixels_and_lines_thread(void);
 void testMemoryAndCamera();
 void test_uart();
 
+void save_image2(void);
+void save_image1(void);
+
+void reset();
+void cameraConfig();
+void delay(int delay);
+
 #endif /* CAMERA_H_ */

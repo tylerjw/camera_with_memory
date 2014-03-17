@@ -46,9 +46,10 @@ int point_finder(int center_points[length][2], static const unsigned int length)
  *
  *
 */
-/*
-int sort_by_col(int center_points[num_points][2], static const unsigned int num_points,
+
+int sort_by_col(int center_points[size_points][2], static const unsigned int size_points,
+        unsigned int num_points,
         int col_idx[col_idx_size], static const unsigned int col_idx_size);
-*/
+
 
 #endif /* POINT_H_ */

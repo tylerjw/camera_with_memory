@@ -102,7 +102,7 @@ void test_uart() {
 }
 
 /*
- * save an image to memory
+ * save an image to memory bank 1
  *
  * wait for vsync to signal start of new image (high then low)
  * open databus switch
@@ -144,6 +144,54 @@ void save_image1(void) {
             ce1 <: 0;
         }
         ce1 <: 1;
+        HREF when pinseq(0) :> void; //waits until HREF goes low at end of row
+    }
+    //cam_oe_we <: CAMON; // stop writing
+}
+
+/*
+ * save an image to memory bank 2
+ *
+ * wait for vsync to signal start of new image (high then low)
+ * open databus switch
+ * wait for href to go high
+ * start loop
+ *  set address
+ *  when pclock -> high
+ *      write data
+ *      increment address
+ */
+void save_image2(void) {
+    int location = 0;
+    // connect data bus switch from camera to memory
+    bus_sw <: 0;
+
+    ce2 <: 1; // select chip 2 (inactive)
+    ce1 <: 1; // deselect chip 1
+
+    cam_oe_we <: CAMON | OE; // configured for writing
+
+    addr <: location; // set the memory address to zero
+
+    VSYNC when pinseq(1) :> void; // wait for VSYHC == 1
+    VSYNC when pinseq(0) :> void; // wait for VSYNC == 0 // new frame
+
+    for(register int y = 0; y < PICHEIGHT; y++){
+        HREF when pinseq(1) :> void; //HREF goes high as bytes become useful
+        PCLK when pinseq(0) :> void;
+        PCLK when pinseq(1) :> void;
+        for(register int x = 0; x < PICWIDTH; x++){
+            PCLK when pinseq(0) :> void;
+            addr <: location;
+            PCLK when pinseq(1) :> void; //rising edge signifies valid byte
+            location++;
+            //this byte is ignored
+            PCLK when pinseq(0) :> void;
+            ce2 <: 1;
+            PCLK when pinseq(1) :> void; //rising edge signifies valid byte
+            ce2 <: 0;
+        }
+        ce2 <: 1;
         HREF when pinseq(0) :> void; //waits until HREF goes low at end of row
     }
     //cam_oe_we <: CAMON; // stop writing

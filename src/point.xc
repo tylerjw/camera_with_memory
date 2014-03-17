@@ -184,11 +184,12 @@ int point_finder(int center_points[length][2], static const unsigned int length)
 }
 
 
-int sort_by_col(int center_points[num_points][2], static const unsigned int num_points,
+int sort_by_col(int center_points[size_points][2], static const unsigned int size_points,
+        unsigned int num_points,
         int col_idx[col_idx_size], static const unsigned int col_idx_size)
 {
-  int working_array[num_points][2]; // array for copying data points
-  int column_number[num_points];    // the column number of each point
+  int working_array[size_points][2]; // array for copying data points
+  int column_number[size_points];    // the column number of each point
   int column_max[30];         // the xvalue of the point that's lowest in the column (allong y axis) maximum (+threshold)
   int column_min[30];         // the min x value, -1 once copied
   int num_col = 0;          // the number of columns found
@@ -263,5 +264,3 @@ int sort_by_col(int center_points[num_points][2], static const unsigned int num_
 
   return num_col;
 }
-
-

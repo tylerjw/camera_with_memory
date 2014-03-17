@@ -22,7 +22,8 @@ void count_pixels_and_lines_thread(void);
 void save_image1(void);
 void sendImage();
 void testMemoryAndCamera();
-configureMirroredImage();
+void configureMirroredImage();
+void save_test_image(void);
 
 void delay(int delay){
     timer t;

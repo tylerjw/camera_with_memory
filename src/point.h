@@ -1,0 +1,51 @@
+/*
+ * point.h
+ *
+ *  Created on: Mar 17, 2014
+ *      Author: tylerjw
+ */
+
+#ifndef POINT_H_
+#define POINT_H_
+
+#define WIDTH 640
+#define HEIGHT  480
+#define NUM_PIXELS  (WIDTH*HEIGHT)
+
+#define XVAL(idx) (idx%WIDTH)
+#define YVAL(idx) (idx/WIDTH)
+
+#define THRESHOLD 10  // threshold for point test
+#define MIN_SIZE  3
+#define MAX_SIZE  (30*30)
+#define MIN_SKEW  -5
+#define MAX_SKEW  5
+
+#define COL_THRESHOLD 20  // threshold for being in the same column
+
+struct Point {
+  int min[2];
+  int max[2];
+  int size;
+  int center[2];
+};
+
+/** point finder
+takes the working green array, finds center points
+
+returns number of center points
+*/
+int point_finder(int center_points[length][2], static const unsigned int length);
+
+/* sorts array of order pairs and sorts them by column
+ * @param center_points     array of center points
+ * @param num_points      number of center points
+ * @param col_idx         array of colom index points (output)
+ * @param col_idx_size      size of col_idx array
+ * @returns number of columns
+ *
+ * NOT IMPLEMENTED
+*/
+//int sort_by_col(int (*center_points)[2], int num_points, int* col_idx, int col_idx_size);
+
+#endif /* POINT_H_ */

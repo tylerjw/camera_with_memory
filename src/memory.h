@@ -28,4 +28,7 @@ void mem1_read_init();
 unsigned char mem_read_byte(unsigned int start_addr);
 void mem_read(unsigned int start_addr, unsigned char buffer[n], unsigned int n);
 
+// interface for point's point_finder function
+void read_filtered_line(unsigned char result[width], static const unsigned int width, int line_number);
+
 #endif /* MEMORY_H_ */

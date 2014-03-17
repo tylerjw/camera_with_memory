@@ -8,6 +8,7 @@
 #include <xs1.h>
 #include <camera.h>
 #include <memory.h>
+#include <point.h>
 
 in port RX = on tile[0]:XS1_PORT_1O;
 out port TX = on tile[0]:XS1_PORT_1P;

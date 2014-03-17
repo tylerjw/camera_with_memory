@@ -296,3 +296,30 @@ void mem_read(unsigned int start_addr, unsigned char buffer[n], unsigned int n) 
         // end loop
     }
 }
+
+/**
+ * read_filtered_line
+ *
+ * assumes dots image is in memory bank 1 and no_dots in bank 2
+ */
+void read_filtered_line(unsigned char result[width], static const unsigned int width, int line_number) {
+  int i;
+  int location = line_number * width;
+  unsigned char dots[width];
+  unsigned char no_dots[width];
+
+  // read both lines from memory
+  mem1_read_init();
+  mem_read(location, dots, width);
+  mem2_read_init();
+  mem_read(location, no_dots, width);
+
+  // build the result array
+  for(i = 0; i < width; i++) {
+    if(no_dots[i] > dots[i]) {
+      result[i] = 0;
+    } else {
+      result[i] = dots[i] - no_dots[i];
+    }
+  }
+}

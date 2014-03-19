@@ -47,6 +47,20 @@ void sendImage(){
     }
 }
 
+void sendImage2(){
+    int location = 0;
+    unsigned char c = 0;
+    mem2_read_init();
+    for(int y = 0; y < PICHEIGHT; y++){
+        for(int x = 0; x < PICWIDTH; x++){
+            c = mem_read_byte(location);
+            location++;
+
+            tx(TX,c);
+        }
+    }
+}
+
 void save_test_image(void) {
     int address = 0;
     for(int y = 0; y < PICHEIGHT; y++) {
@@ -202,6 +216,8 @@ void save_image2(void) {
  * program camera over i2c
  */
 void cameraConfig() {
+    int j;
+    JUMPER :> j;
     ///////////clock setup
     //char data[1] = {0b10001111}; // puts a divider on clock (fps = 1)
     char data[1] = {0b10000011}; // fps = 3
@@ -211,6 +227,9 @@ void cameraConfig() {
     data[0] = 0xC0; // default 16bit mode
     i2c_master_write_reg(0x21,0x40,data,1,i2c_if);
     ///////////end clock setup
+    if(j == 1) {
+        configureMirroredImage();
+    }
 }
 
 void configureMirroredImage() {

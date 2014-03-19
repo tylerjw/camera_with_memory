@@ -20,6 +20,8 @@ extern out port ce2; // = on tile[0]:XS1_PORT_1L;
 extern in port RX; // = on tile[0]:XS1_PORT_1O;
 extern out port TX; // = on tile[0]:XS1_PORT_1P;
 
+extern in port JUMPER; // = on tile[0]:XS1_PORT_1C;
+
 #define PICHEIGHT 480
 #define PICWIDTH 640
 #define UARTDELAY 100
@@ -33,6 +35,8 @@ void test_uart();
 
 void save_image2(void);
 void save_image1(void);
+void sendImage();
+void sendImage2();
 
 void reset();
 void cameraConfig();

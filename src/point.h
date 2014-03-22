@@ -22,6 +22,7 @@
 #define MAX_SKEW  5
 
 #define COL_THRESHOLD 20  // threshold for being in the same column
+#define ROW_THRESHOLD 20
 
 struct Point {
   int min[2];
@@ -50,6 +51,10 @@ int point_finder(int center_points[length][2], static const unsigned int length)
 int sort_by_col(int center_points[size_points][2], static const unsigned int size_points,
         unsigned int num_points,
         int col_idx[col_idx_size], static const unsigned int col_idx_size);
+
+int sort_by_row(int center_points[size_points][2], static const unsigned int size_points,
+        unsigned int num_points,
+        int row_idx[row_idx_size], static const unsigned int row_idx_size);
 
 
 #endif /* POINT_H_ */

@@ -15,6 +15,7 @@
 
 #define POINT_BUFFER_LENGTH   300
 #define MAX_COLUMNS           30
+#define MAX_ROWS              30
 
 in port RX = on tile[0]:XS1_PORT_1O;
 out port TX = on tile[0]:XS1_PORT_1P;
@@ -42,7 +43,10 @@ void camera_thread(void) {
     int num_points = 0;
     int num_columns = 0;
     int col_idx[MAX_COLUMNS];
-    char buffer[80];
+    int num_rows = 0;
+    int row_idx[MAX_ROWS];
+
+    //char buffer[80];
 
     // uart init
     uart_init(1e6);
@@ -81,19 +85,28 @@ void camera_thread(void) {
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
             // sort columns
 
-            num_columns = sort_by_col(center_points, POINT_BUFFER_LENGTH, num_points, col_idx, MAX_COLUMNS);
+//            num_columns = sort_by_col(center_points, POINT_BUFFER_LENGTH, num_points, col_idx, MAX_COLUMNS);
+//
+//            for(int i=0,j=0; i<num_points; i++)
+//            {
+//                if(i == col_idx[j])
+//                  printf("Column %d:\n", j++);
+//                printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+//            }
 
-            printf("Points Found %d, Columns Found: %d\r\n", num_points, num_columns);
+            num_rows = sort_by_row(center_points, POINT_BUFFER_LENGTH, num_points, row_idx, MAX_ROWS);
+
+            printf("Points Found %d, Columns Found: %d, Rows Found: %d\r\n", num_points, num_columns, num_rows);
 
             for(int i=0,j=0; i<num_points; i++)
             {
-                if(i == col_idx[j])
-                      printf("Column %d:\n", j++);
+                if(i == row_idx[j])
+                  printf("Row %d:\n", j++);
                 printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
             }
             break;
         case 4:
-            // send to computer
+            // send to computer image 2
             c = rx(RX);
             tx(TX,0);
             printf("Sending image\r\n");
@@ -138,7 +151,7 @@ void camera_thread(void) {
 
 int main(void) {
     par {
-        on tile[0]:testMemoryAndCamera();
+        on tile[0]:camera_thread();
     }
     return 0;
 }

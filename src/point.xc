@@ -154,7 +154,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
         {
           right = y*WIDTH + x;
         }
-      } else if(left != -1 && ((right - left) > 0)) {
+      } else if(left != -1 && ((right - left) > 1)) {
         int found = 0;
         for(int j=0; j<=right_point && found == 0;j++)
         {
@@ -179,7 +179,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
                   printf("Out of memory in center_points\n");
                   continue;
                 }
-                if(!in_points(center_points,length,points[j].center)) {
+                if(!in_points(center_points,length,points[j].center) && points[j].center[0] > 5) {
                   center_points[num_centers][0] = points[j].center[0];
                   center_points[num_centers][1] = points[j].center[1];
                   num_centers++;
@@ -236,8 +236,8 @@ int sort_by_col(int center_points[size_points][2], static const unsigned int siz
   int working_array_x[size_points]; // array for copying data points
   int working_array_y[size_points]; // array for copying data points
   int column_number[size_points];    // the column number of each point
-  int column_max[30];         // the xvalue of the point that's lowest in the column (allong y axis) maximum (+threshold)
-  int column_min[30];         // the min x value, -1 once copied
+  int column_max[col_idx_size];         // the xvalue of the point that's lowest in the column (allong y axis) maximum (+threshold)
+  int column_min[col_idx_size];         // the min x value, -1 once copied
   int num_col = 0;          // the number of columns found
   int const done_C = -1000;     // done with this column
   int point_count = 0;          // counter for adding values back into the array
@@ -250,55 +250,57 @@ int sort_by_col(int center_points[size_points][2], static const unsigned int siz
   working_array_x[0] = center_points[0][0];
   working_array_y[0] = center_points[0][1];
 
-  for(int i = 1; i < num_points; i++) // i - point number
+  for(int p = 1; p < num_points; p++) // p - point number
   {
     int column_found = 0; // bool false
-    for(int j = 0; j < num_col; j++) // j - column number
+    for(int col = 0; col < num_col; col++) // col - column number
     {
-      if(center_points[i][0] <= column_max[j] && center_points[i][0] >= column_min[j])
+      if(center_points[p][0] <= column_max[col] && center_points[p][0] >= column_min[col])
       {
         // in this column
-        column_number[i] = j;
-        column_min[j] = center_points[i][0] - COL_THRESHOLD;
-        column_max[j] = center_points[i][0] + COL_THRESHOLD;
+        column_number[p] = col;
+        column_min[col] = center_points[p][0] - COL_THRESHOLD;
+        column_max[col] = center_points[p][0] + COL_THRESHOLD;
         column_found = 1; // true
       }
     }
-    if(!column_found)
+    if(!column_found && num_col < col_idx_size)
     {
-      column_number[i] = num_col;
-      column_min[num_col] = center_points[i][0] - COL_THRESHOLD;
-      column_max[num_col] = center_points[i][0] + COL_THRESHOLD;
+      column_number[p] = num_col;
+      column_min[num_col] = center_points[p][0] - COL_THRESHOLD;
+      column_max[num_col] = center_points[p][0] + COL_THRESHOLD;
       num_col++;
     }
     column_found = 0; // false
 
-    working_array_x[i] = center_points[i][0]; // copy into working array
-    working_array_y[i] = center_points[i][1];
+    working_array_x[p] = center_points[p][0]; // copy into working array
+    working_array_y[p] = center_points[p][1];
   }
 
   // sort the columns and the array
-  for(int i = 0; i < num_col; i++) // i - column number
+  for(int col = 0; col < num_col; col++) // col - column number
   {
     int lowest = -1;
-    for(int j = 0; j < num_col; j++) // j = column number
+    for(int col2 = 0; col2 < num_col; col2++) // col2 = column number
     {
-      if(lowest == -1 && column_min[j] != done_C)
-      {
-        lowest = j;
-      }
-      else if(column_max[lowest] > column_max[j] && column_min[j] != done_C)
-      {
-        lowest = j;
+      if(column_min[col2] != done_C) {
+          if(lowest == -1)
+          {
+            lowest = col2;
+          }
+          else if(column_max[lowest] > column_max[col2])  // runs over the end
+          {
+            lowest = col2;
+          }
       }
     }
     column_min[lowest] = done_C;
-    for(int j = 0; j < num_points; j++) // j - point number
+    for(int p = 0; p < num_points; p++) // p - point number
     {
-      if(column_number[j] == lowest)
+      if(column_number[p] == lowest && point_count < size_points)
       {
-        center_points[point_count][0] = working_array_x[j];
-        center_points[point_count][1] = working_array_y[j];
+        center_points[point_count][0] = working_array_x[p];
+        center_points[point_count][1] = working_array_y[p];
         point_count++;
       }
     }

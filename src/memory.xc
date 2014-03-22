@@ -305,21 +305,19 @@ void mem_read(unsigned int start_addr, unsigned char buffer[n], unsigned int n) 
 void read_filtered_line(unsigned char result[width], static const unsigned int width, int line_number) {
   int i;
   int location = line_number * width;
-  unsigned char dots[width];
-  unsigned char no_dots[width];
-
-  // read both lines from memory
-  mem1_read_init();
-  mem_read(location, dots, width);
-  mem2_read_init();
-  mem_read(location, no_dots, width);
+  unsigned char dots;
+  unsigned char no_dots;
 
   // build the result array
   for(i = 0; i < width; i++) {
-    if(no_dots[i] > dots[i]) {
+    mem1_read_init();
+    dots = mem_read_byte(location+i);
+    mem2_read_init();
+    no_dots = mem_read_byte(location+i);
+    if(no_dots > dots) {
       result[i] = 0;
     } else {
-      result[i] = dots[i] - no_dots[i];
+      result[i] = dots - no_dots;
     }
   }
 }

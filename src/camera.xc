@@ -33,6 +33,18 @@ void delay(int delay){
     t when timerafter(time) :> void;
 }
 
+void sendFilteredImage(){
+    unsigned char working_line[640];
+
+    for(int y = 0; y < PICHEIGHT; y++){
+        read_filtered_line(working_line, 640, y);
+        for(int x = 0; x < PICWIDTH; x++){
+
+            tx(TX,working_line[x]);
+        }
+    }
+}
+
 void sendImage(){
     int location = 0;
     unsigned char c = 0;
@@ -79,16 +91,16 @@ void testMemoryAndCamera(){
     delay(10e6);
     uart_init(1e6);
     while(1){
-        printf("Saving image...\n");
+        //printf("Saving image...\n");
         //delay(1e6);
         save_image1(); // save an image
         //save_test_image();
-        printf("Waiting for start condition\n");
+        //printf("Waiting for start condition\n");
         c = rx(RX);
         tx(TX,0);
-        printf("Sending image\n");
+        //printf("Sending image\n");
         sendImage();
-        printf("Image Sent!\n");
+        //printf("Image Sent!\n");
     }
 }
 

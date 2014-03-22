@@ -37,6 +37,7 @@ void save_image2(void);
 void save_image1(void);
 void sendImage();
 void sendImage2();
+void sendFilteredImage();
 
 void reset();
 void cameraConfig();

@@ -55,9 +55,10 @@ void camera_thread(void) {
     delay(10e6);
 
     while(1) {
-        c = rx2(RX_M) - (int)'0';
-        sprintf(buffer, "\r\n");
-        tx2_str(TX_M, buffer, strlen(buffer));
+        //c = rx2(RX_M) - (int)'0';
+        c = getchar() - (int)'0';
+        printf("\r\n");
+        // tx2_str(TX_M, buffer, strlen(buffer));
         //c = 2;
         //printf("Received: %d\r\n", c);
 
@@ -65,52 +66,69 @@ void camera_thread(void) {
         case 0:
             // save image 1
             save_image1();
-            sprintf(buffer, "Saved Image 1\r\n");
-            tx2_str(TX_M, buffer, strlen(buffer));
+            printf("Saved Image 1\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
             break;
         case 1:
             // save image 2
             save_image2();
-            sprintf(buffer, "Saved Image 2\r\n");
-            tx2_str(TX_M, buffer, strlen(buffer));
+            printf("Saved Image 2\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
             break;
         case 2:
             // find points and columns
             // get our points
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
             // sort columns
-            sprintf(buffer, "Points Found %d, Columns Found: %d\r\n", num_points, num_columns);
-            tx2_str(TX_M, buffer, strlen(buffer));
 
-            //num_columns = sort_by_col(center_points, POINT_BUFFER_LENGTH, num_points, col_idx, MAX_COLUMNS);
+            num_columns = sort_by_col(center_points, POINT_BUFFER_LENGTH, num_points, col_idx, MAX_COLUMNS);
 
-            // do something with our data, for now print to console
-            //sprintf(buffer, "Points Found %d, Columns Found: %d\r\n", num_points, num_columns);
-            //tx2_str(TX_M, buffer, strlen(buffer));
+            printf("Points Found %d, Columns Found: %d\r\n", num_points, num_columns);
+
             for(int i=0,j=0; i<num_points; i++)
             {
-                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+                if(i == col_idx[j])
+                      printf("Column %d:\n", j++);
+                printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
             }
             break;
         case 4:
             // send to computer
             c = rx(RX);
             tx(TX,0);
-            sprintf(buffer, "Sending image\r\n");
-            tx2_str(TX_M, buffer, strlen(buffer));
+            printf("Sending image\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
             sendImage2();
             printf("Image Sent\r\n");
-            tx2_str(TX_M, buffer, strlen(buffer));
+            // tx2_str(TX_M, buffer, strlen(buffer));
             break;
         case 3:
             // send to computer
             c = rx(RX);
             tx(TX,0);
-            sprintf(buffer, "Sending image\r\n");
-            tx2_str(TX_M, buffer, strlen(buffer));
-            sendImage();
-            sprintf(buffer, "Image Sent\r\n");
-            tx2_str(TX_M, buffer, strlen(buffer));
+            printf("Sending image\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            sendFilteredImage();
+            printf("Image Sent\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
+            printf("num_points = %d\n", num_points);
+            printf("Performing handshake\n");
+            //tx(TX,10);
+            rx(RX);
+            tx(TX,num_points);
+            //rx(RX);
+            printf("Sending points\n");
+            for(int i = 0; i < num_points; i++) {
+                //rx(RX);
+                tx(TX, center_points[i][0]);
+                tx(TX, center_points[i][0] >> 8);
+                tx(TX, center_points[i][1]);
+                tx(TX, center_points[i][1] >> 8);
+                printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+                //delay(1e4);
+            }
+            printf("Done\n");
             break;
         }
     }
@@ -120,7 +138,7 @@ void camera_thread(void) {
 
 int main(void) {
     par {
-        on tile[0]:camera_thread();
+        on tile[0]:testMemoryAndCamera();
     }
     return 0;
 }

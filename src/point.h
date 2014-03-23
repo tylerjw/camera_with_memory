@@ -8,18 +8,18 @@
 #ifndef POINT_H_
 #define POINT_H_
 
-#define WIDTH 640
-#define HEIGHT  480
+#define WIDTH       640
+#define HEIGHT      480
 #define NUM_PIXELS  (WIDTH*HEIGHT)
 
 #define XVAL(idx) (idx%WIDTH)
 #define YVAL(idx) (idx/WIDTH)
 
-#define THRESHOLD 5  // threshold for point test
+#define THRESHOLD 20  // threshold for point test
 #define MIN_SIZE  3
 #define MAX_SIZE  (30*30)
-#define MIN_SKEW  -10
-#define MAX_SKEW  10
+#define MIN_SKEW  -30
+#define MAX_SKEW  30
 
 #define COL_THRESHOLD 20  // threshold for being in the same column
 #define ROW_THRESHOLD 20

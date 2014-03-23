@@ -145,7 +145,7 @@ void camera_thread(void) {
                 tx(TX, center_points[i][0] >> 8);
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
-                printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
                 //delay(1e4);
             }
             printf("Done\n");

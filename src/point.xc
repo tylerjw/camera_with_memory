@@ -15,16 +15,17 @@
 
 // internal interface
 void init_point(struct Point *p);
-void add_line(struct Point *p, int left, int right); // adds a line of pixels to POINT
-void add_point(struct Point *p, int index);
-int test_point(struct Point *p, int index); // x-failure: 0, y-falure: -1, new point and success = 1
+void add_line(struct Point *p, int y, int left, int right); // adds a line of pixels to POINT
+void add_point(struct Point *p,int x, int y);
+int test_point(struct Point *p, int x, int y); // x-failure: 0, y-falure: -1, new point and success = 1
 int test_shape(struct Point *p); //
 void calculate_center(struct Point *p);
 int in_points(int points[length][2], unsigned int length, int center[2]) ;
 
 int in_points(int points[length][2], unsigned int length, int center[2]) {
   for(int i = 0; i < length; i++) {
-    if(center[0] == points[i][0] && center[1] == points[i][1])
+    if(abs(center[0] - points[i][0]) < THRESHOLD
+            && abs(center[1] - points[i][1]) < THRESHOLD)
       return 1;
   }
   return 0;
@@ -45,55 +46,55 @@ void init_point(struct Point *p)
   p->size = 0;
 }
 
-void add_line(struct Point *p, int left, int right)
+void add_line(struct Point *p, int y, int left, int right)
 {
   if(left == right)
   {
-    add_point(p, left);
+    add_point(p, left, y);
   }
   else if(p->size == 0)
   {
-    p->min[0] = XVAL(left);
-    p->max[0] = XVAL(right);
-    p->min[1] = p->max[1] = YVAL(left); // should be the same column
+    p->min[0] = left;
+    p->max[0] = right;
+    p->min[1] = p->max[1] = y; // should be the same column
     p->size += right - left;
   }
   else
   {
-    if(XVAL(left) < p->min[0]) p->min[0] = XVAL(left);
-    if(XVAL(right) > p->max[0]) p->max[0] = XVAL(right);
-    p->max[1] = YVAL(left); // should just be one line and should be greater than last one
+    if(left < p->min[0]) p->min[0] = left;
+    if(right > p->max[0]) p->max[0] = right;
+    p->max[1] = y; // should just be one line and should be greater than last one
     p->size += right - left;
   }
 }
 
-void add_point(struct Point *p, int index)
+void add_point(struct Point *p, int x, int y)
 {
   if(p->size == 0)
   {
-    p->min[0] = p->max[0] = XVAL(index);
-    p->min[1] = p->max[1] = YVAL(index); // should be the same column
+    p->min[0] = p->max[0] = x;
+    p->min[1] = p->max[1] = y; // should be the same column
   }
   else
   {
-    if(XVAL(index) < p->min[0]) p->min[0] = XVAL(index);
-    if(XVAL(index) > p->max[0]) p->max[0] = XVAL(index);
-    p->max[1] = YVAL(index); // should just be one line and should be greater than last one
+    if(x < p->min[0]) p->min[0] = x;
+    if(x > p->max[0]) p->max[0] = x;
+    p->max[1] = y; // should just be one line and should be greater than last one
   }
   p->size++;
 }
 
-int test_point(struct Point *p, int index)
+int test_point(struct Point *p, int x, int y)
 {
   if(p->size == 0) { // new point
     //printf("new point\n");
     return 1;
   }
-  if(YVAL(index) > (p->max[1]+1)) { // should never be a break - done with point
+  if((y - p->max[1]) > 3) { // done with point -- went past on y axis
     //printf("break\n");
     return -1;
   }
-  if(XVAL(index) < (p->min[0]-THRESHOLD) || XVAL(index) > (p->max[0]+THRESHOLD)) {
+  if(x < (p->min[0]-THRESHOLD) || x > (p->max[0]+THRESHOLD)) {
     //printf("not this point\n");
     return 0; // don't add to this point, but keep active
   }
@@ -124,7 +125,9 @@ int point_finder(int center_points[length][2], static const unsigned int length)
 {
   // point finder variables
   int left, right;
-  const int threshold_C = 80;
+  const int threshold_C = 40;
+  const int threshold2_C = 10;
+  const int min_width_C = 1;
   //const int change_C = 60;
   struct Point points[length];
   const int unused_C = 0;
@@ -133,6 +136,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
   int right_point = -1;
   int num_centers = 0;
   unsigned char working_line[WIDTH];
+  int duplicates = 0;
 
   // init the points
   for(int i = 0; i < length; i++) {
@@ -145,33 +149,31 @@ int point_finder(int center_points[length][2], static const unsigned int length)
     left = right = -1; // new line
     read_filtered_line(working_line, WIDTH, y);
     for(int x=0; x<WIDTH; x++) {
-//      if((x > 130 && x < 135) || (x > 255 && x < 260) || (x > 385 && x < 390) || (x > 512 && x < 520)) {
-//          left = right = -1;
-//          continue;
-//      }
-      if(working_line[x] > threshold_C)
+      if(working_line[x] > threshold_C || (left!=-1 && working_line[x] > threshold2_C))
       {
         if(left == -1) // new line of high values
         {
-          left = y*WIDTH + x;
+          left = x;
           right = left;
         }
         else
         {
-          right = y*WIDTH + x;
+          right = x;
         }
-      } else if(left != -1 && ((right - left) > 1)) {
+      } else if(left != -1 && ((right - left) >= min_width_C)) {
+          // line of data found, add to points
         int found = 0;
-        for(int j=0; j<=right_point && found == 0;j++)
+        for(int j=0; j<=right_point && found == 0;j++) // j - index through points
         {
 
           if(point_status[j] == active_C)
           {
-            //printf("testing point %d\n", j);
-            int test = test_point(&points[j], left);
-            if(test == 1)
+            //printf("testing point %d\n", j); // to see if this line fits with this point
+            int center = left + ((right - left)/2);
+            int test = test_point(&points[j], center, y);
+            if(test == 1) // add to this point
             {
-              add_line(&points[j],left,right);
+              add_line(&points[j],y,left,right);
               found = 1;
               //printf("%d Right Point: %d\n", j, right_point);
               //break;
@@ -185,15 +187,20 @@ int point_finder(int center_points[length][2], static const unsigned int length)
                   printf("Out of memory in center_points\n");
                   continue;
                 }
-                if(!in_points(center_points,length,points[j].center) && points[j].center[0] > 5) {
+                // add to output - if not there already?
+                if(!in_points(center_points,length,points[j].center)) { // && points[j].center[0] > 5
                   center_points[num_centers][0] = points[j].center[0];
                   center_points[num_centers][1] = points[j].center[1];
                   num_centers++;
+                } else {
+                    duplicates++;
                 }
               }
               // free the point
               point_status[j] = unused_C;
               init_point(&points[j]);
+              if(j == right_point)
+                  right_point--;
             }
           }
         }
@@ -206,7 +213,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
             if(point_status[j] == unused_C) {
               found_unused = 1;
               point_status[j] = active_C;
-              add_line(&points[j], left, right);
+              add_line(&points[j], y, left, right);
               //printf("found unused point\n");
             }
           }
@@ -220,17 +227,17 @@ int point_finder(int center_points[length][2], static const unsigned int length)
             //printf("right_point: %d\n", right_point);
             right_point++;
             point_status[right_point] = active_C;
-            add_line(&points[right_point], left, right);
+            add_line(&points[right_point], y, left, right);
             //printf("added a point\n");
           }
 
         }
-        left = -1;
+        left = right = -1;
       }
     }
   }
 
-  printf("Right Point: %d\n", right_point);
+  printf("Right Point: %d, duplicates: %d\n", right_point, duplicates);
   return num_centers;
 }
 

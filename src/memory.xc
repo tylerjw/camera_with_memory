@@ -325,7 +325,7 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
 
     // median filter
     if(i == 0) {
-        x1 = result[i];
+        x1 = result[i] = 0;
     } else if(i > 0 && i < width-1) {
         if(x1 > result[i]) {
             large = x1;

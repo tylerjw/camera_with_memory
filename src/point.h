@@ -15,7 +15,7 @@
 #define XVAL(idx) (idx%WIDTH)
 #define YVAL(idx) (idx/WIDTH)
 
-#define THRESHOLD 20  // threshold for point test
+#define THRESHOLD 10  // threshold for point test
 #define MIN_SIZE  3
 #define MAX_SIZE  (30*30)
 #define MIN_SKEW  -30

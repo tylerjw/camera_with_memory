@@ -125,10 +125,12 @@ int point_finder(int center_points[length][2], static const unsigned int length)
 {
   // point finder variables
   int left, right;
-  const int threshold_C = 40;
-  const int threshold2_C = 10;
+  // outdoor test 25,10
+  // indoor test 40,10
+  const int threshold_C = 25; // 40
+  const int threshold2_C = 10; // 10
   const int min_width_C = 1;
-  //const int change_C = 60;
+  static int point_multiplier = 1;
   struct Point points[length];
   const int unused_C = 0;
   const int active_C = 1;
@@ -149,6 +151,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
     left = right = -1; // new line
     read_filtered_line(working_line, WIDTH, y);
     for(int x=0; x<WIDTH; x++) {
+      working_line[x] *= point_multiplier; // increase the sensetivity
       if(working_line[x] > threshold_C || (left!=-1 && working_line[x] > threshold2_C))
       {
         if(left == -1) // new line of high values
@@ -199,8 +202,9 @@ int point_finder(int center_points[length][2], static const unsigned int length)
               // free the point
               point_status[j] = unused_C;
               init_point(&points[j]);
-              if(j == right_point)
-                  right_point--;
+              if(j == right_point) {
+                  break;
+              }
             }
           }
         }
@@ -236,8 +240,12 @@ int point_finder(int center_points[length][2], static const unsigned int length)
       }
     }
   }
-
-  printf("Right Point: %d, duplicates: %d\n", right_point, duplicates);
+  printf("Right Point: %d, duplicates: %d, multiplier: %d\n", right_point, duplicates, point_multiplier);
+  if(num_centers < 10) {
+      point_multiplier++;
+  } else if(num_centers > 30 && point_multiplier > 1) {
+      point_multiplier--;
+  }
   return num_centers;
 }
 

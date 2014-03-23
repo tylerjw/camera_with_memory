@@ -36,6 +36,13 @@ in port VSYNC = on tile[0]:XS1_PORT_1G;
 
 in port JUMPER = on tile[0]:XS1_PORT_1C;
 
+void clear_points(int the_points[l][2], const static unsigned int l) {
+    for(int i = 0; i < l; i++) {
+        the_points[i][0] = 0;
+        the_points[i][1] = 0;
+    }
+}
+
 // threads //
 
 void camera_thread(void) {
@@ -144,6 +151,7 @@ void camera_thread(void) {
             printf("Done\n");
             break;
         }
+        clear_points(center_points, POINT_BUFFER_LENGTH);
     }
 }
 

@@ -307,6 +307,9 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
   int location = line_number * width;
   unsigned char dots;
   unsigned char no_dots;
+  int median;
+  int x1;
+  int large, small;
 
   // build the result array
   for(i = 0; i < width; i++) {
@@ -318,6 +321,29 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
       result[i] = 0;
     } else {
       result[i] = dots - no_dots;
+    }
+
+    // median filter
+    if(i == 0) {
+        x1 = result[i];
+    } else if(i > 0 && i < width-1) {
+        if(x1 > result[i]) {
+            large = x1;
+            small = result[i];
+        } else {
+            large = result[i];
+            small = x1;
+        }
+        if(result[i+1] > large) {
+            median = large;
+        } else if(result[i+1] < small) {
+            median = small;
+        } else {
+            median = result[i+1];
+        }
+
+        x1 = result[i];
+        result[i] = median;
     }
   }
 }

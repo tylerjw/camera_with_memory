@@ -15,11 +15,11 @@
 #define XVAL(idx) (idx%WIDTH)
 #define YVAL(idx) (idx/WIDTH)
 
-#define THRESHOLD 10  // threshold for point test
+#define THRESHOLD 5  // threshold for point test
 #define MIN_SIZE  3
 #define MAX_SIZE  (30*30)
-#define MIN_SKEW  -5
-#define MAX_SKEW  5
+#define MIN_SKEW  -10
+#define MAX_SKEW  10
 
 #define COL_THRESHOLD 20  // threshold for being in the same column
 #define ROW_THRESHOLD 20

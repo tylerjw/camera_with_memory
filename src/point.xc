@@ -124,7 +124,8 @@ int point_finder(int center_points[length][2], static const unsigned int length)
 {
   // point finder variables
   int left, right;
-  const int threshold_C = 10;
+  const int threshold_C = 80;
+  //const int change_C = 60;
   struct Point points[length];
   const int unused_C = 0;
   const int active_C = 1;
@@ -144,12 +145,16 @@ int point_finder(int center_points[length][2], static const unsigned int length)
     left = right = -1; // new line
     read_filtered_line(working_line, WIDTH, y);
     for(int x=0; x<WIDTH; x++) {
+//      if((x > 130 && x < 135) || (x > 255 && x < 260) || (x > 385 && x < 390) || (x > 512 && x < 520)) {
+//          left = right = -1;
+//          continue;
+//      }
       if(working_line[x] > threshold_C)
       {
         if(left == -1) // new line of high values
         {
           left = y*WIDTH + x;
-          right = y*WIDTH + x;
+          right = left;
         }
         else
         {

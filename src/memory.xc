@@ -301,6 +301,8 @@ void mem_read(unsigned int start_addr, unsigned char buffer[n], unsigned int n) 
  * read_filtered_line
  *
  * assumes dots image is in memory bank 1 and no_dots in bank 2
+ * *
+ * subtraction then median filter
  */
 void read_filtered_line(unsigned char result[width], static const unsigned int width, int line_number) {
   int i;

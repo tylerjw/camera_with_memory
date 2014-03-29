@@ -108,16 +108,16 @@ int test_shape(struct Point *p)
 
   if(p->size < MIN_SIZE)
     return -1;
-  if(p->size > MAX_SIZE)
-    return -2;
-
+//  if(p->size > MAX_SIZE)
+//    return -2;
+  /*
   width = p->max[0] - p->min[0];
   height = p->max[1] - p->min[1];
   skew = height - width;
 
   if(skew > MAX_SKEW || skew < MIN_SKEW)
     return -3;
-
+*/
   return 1;
 }
 
@@ -127,8 +127,8 @@ int point_finder(int center_points[length][2], static const unsigned int length)
   int left, right;
   // outdoor test 25,10
   // indoor test 40,10
-  const int threshold_C = 25; // 40
-  const int threshold2_C = 10; // 10
+  const int threshold_C = 100; // 40
+  const int threshold2_C = 80; // 10
   const int min_width_C = 1;
   static int point_multiplier = 1;
   struct Point points[length];
@@ -139,6 +139,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
   int num_centers = 0;
   unsigned char working_line[WIDTH];
   int duplicates = 0;
+  int score = 0;
 
   // init the points
   for(int i = 0; i < length; i++) {
@@ -164,6 +165,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
           right = x;
         }
       } else if(left != -1 && ((right - left) >= min_width_C)) {
+          score++;
           // line of data found, add to points
         int found = 0;
         for(int j=0; j<=right_point && found == 0;j++) // j - index through points
@@ -187,7 +189,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
                 calculate_center(&points[j]); // calculates the center points
                 //printf("Good Shape (%d,%d)\n", points[j].center[0], points[j].center[1]);
                 if(num_centers == (length-1)) {
-                  printf("Out of memory in center_points\n");
+                  //printf("Out of memory in center_points\n");
                   continue;
                 }
                 // add to output - if not there already?
@@ -223,7 +225,7 @@ int point_finder(int center_points[length][2], static const unsigned int length)
           }
 
           if(right_point == (length-1))
-            printf("Need more memory for points array!\n");
+            //printf("Need more memory for points array!\n");
           //printf("found_unused == 0 -> %d\n", found_unused == 0);
           //printf("right_point: %d < length: %d -> %d\n", right_point, length, right_point < length);
           if(found_unused == 0 && (right_point < length-1 || right_point == -1)) { // get new point (bounded, safe)
@@ -240,12 +242,15 @@ int point_finder(int center_points[length][2], static const unsigned int length)
       }
     }
   }
-  printf("Right Point: %d, duplicates: %d, multiplier: %d\n", right_point, duplicates, point_multiplier);
-  if(num_centers < 10) {
+  //printf("Right Point: %d, duplicates: %d, multiplier: %d\n", right_point, duplicates, point_multiplier);
+  //printf("score: %d\n", score);
+  /*
+  if(num_centers < 10 && point_multiplier < 5) {
       point_multiplier++;
   } else if(num_centers > 30 && point_multiplier > 1) {
       point_multiplier--;
   }
+  */
   return num_centers;
 }
 

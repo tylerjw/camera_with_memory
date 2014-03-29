@@ -36,6 +36,8 @@ in port VSYNC = on tile[0]:XS1_PORT_1G;
 
 in port JUMPER = on tile[0]:XS1_PORT_1C;
 
+// #define DEBUG
+
 void clear_points(int the_points[l][2], const static unsigned int l) {
     for(int i = 0; i < l; i++) {
         the_points[i][0] = 0;
@@ -64,11 +66,17 @@ void camera_thread(void) {
     delay(100e6);
     cameraConfig(); // if JUMPER == 1, mirrored
     delay(10e6);
+    c = 4;
 
     while(1) {
+//        if(c == 0) {
+//            c = 4;
+//        } else {
+//            c = 0;
+//        }
         //c = rx2(RX_M) - (int)'0';
         c = getchar() - (int)'0';
-        printf("\r\n");
+        //printf("\r\n");
         // tx2_str(TX_M, buffer, strlen(buffer));
         //c = 2;
         //printf("Received: %d\r\n", c);
@@ -112,16 +120,6 @@ void camera_thread(void) {
                 printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
             }
             break;
-        case 4:
-            // send to computer image 2
-            c = rx(RX);
-            tx(TX,0);
-            printf("Sending image\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
-            sendImage2();
-            printf("Image Sent\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
-            break;
         case 3:
             // send to computer
             c = rx(RX);
@@ -129,6 +127,70 @@ void camera_thread(void) {
             printf("Sending image\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             sendFilteredImage();
+            //sendImage();
+            //sendImage2();
+            printf("Image Sent\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
+            printf("num_points = %d\n", num_points);
+            printf("Performing handshake\n");
+            //tx(TX,10);
+            rx(RX);
+            tx(TX,num_points);
+            //rx(RX);
+            printf("Sending points\n");
+            for(int i = 0; i < num_points; i++) {
+                //rx(RX);
+                tx(TX, center_points[i][0]);
+                tx(TX, center_points[i][0] >> 8);
+                tx(TX, center_points[i][1]);
+                tx(TX, center_points[i][1] >> 8);
+                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+                //delay(1e4);
+            }
+            printf("Done\n");
+            break;
+
+        case 4:
+            // send to computer
+            c = rx(RX);
+            tx(TX,0);
+            printf("Sending image\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            //sendFilteredImage();
+            sendImage();
+            //sendImage2();
+            printf("Image Sent\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
+            printf("num_points = %d\n", num_points);
+            printf("Performing handshake\n");
+            //tx(TX,10);
+            rx(RX);
+            tx(TX,num_points);
+            //rx(RX);
+            printf("Sending points\n");
+            for(int i = 0; i < num_points; i++) {
+                //rx(RX);
+                tx(TX, center_points[i][0]);
+                tx(TX, center_points[i][0] >> 8);
+                tx(TX, center_points[i][1]);
+                tx(TX, center_points[i][1] >> 8);
+                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+                //delay(1e4);
+            }
+            printf("Done\n");
+            break;
+
+        case 5:
+            // send to computer
+            c = rx(RX);
+            tx(TX,0);
+            printf("Sending image\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            //sendFilteredImage();
+            //sendImage();
+            sendImage2();
             printf("Image Sent\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
@@ -151,7 +213,144 @@ void camera_thread(void) {
             printf("Done\n");
             break;
         }
+
         clear_points(center_points, POINT_BUFFER_LENGTH);
+    }
+}
+
+void slave_thread(void) {
+    int center_points[POINT_BUFFER_LENGTH][2];
+    int num_points = 0;
+    int num_columns = 0;
+    int col_idx[MAX_COLUMNS];
+    int num_rows = 0;
+    int row_idx[MAX_ROWS];
+    int j;
+    JUMPER :> j;
+
+    //char buffer[80];
+
+    // uart init
+    //uart_init(1e6);
+    int c;
+
+    //printf("Configuring camera\n");
+
+    // camera init
+    reset();
+    delay(100e6);
+    cameraConfig(); // if JUMPER == 1, mirrored
+    delay(10e6);
+
+    //printf("Start main loop\n");
+    while(1) {
+        c = rx2(RX_M) - (int)'0';
+        //printf("Received: %d\n", c);
+        switch(c) {
+        case 0:
+            // save image 1
+            save_image1();
+            //printf("Saved Image 1\n");
+            tx(TX_M, 0); // done
+            break;
+        case 1:
+            // save image 2
+            save_image2();
+            //printf("Saved Image 2\n");
+            // find points and columns
+            // get our points
+            clear_points(center_points, POINT_BUFFER_LENGTH);
+            num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
+            // sort columns
+            if(j == 0) {
+                num_columns = sort_by_col(center_points, POINT_BUFFER_LENGTH, num_points, col_idx, MAX_COLUMNS);
+            } else {
+                num_rows = sort_by_row(center_points, POINT_BUFFER_LENGTH, num_points, row_idx, MAX_ROWS);
+            }
+            //printf("num_points: %d\n", num_points);
+
+            tx(TX_M, 0); // done
+
+#ifdef DEBUG
+            // send to computer
+            c = rx(RX);
+            tx(TX,0);
+            //printf("Sending image\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            //sendFilteredImage();
+            //sendImage();
+            sendImage2();
+            //printf("Image Sent\r\n");
+            // tx2_str(TX_M, buffer, strlen(buffer));
+            //printf("Performing handshake\n");
+            //tx(TX,10);
+            rx(RX);
+            tx(TX,num_points);
+            //rx(RX);
+            //printf("Sending points\n");
+            for(int i = 0; i < num_points; i++) {
+                //rx(RX);
+                tx(TX, center_points[i][0]);
+                tx(TX, center_points[i][0] >> 8);
+                tx(TX, center_points[i][1]);
+                tx(TX, center_points[i][1] >> 8);
+                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+                //delay(1e4);
+            }
+            //printf("Done\n");
+#endif
+            break;
+        case 2: // cam A send your data
+            num_points = 2;
+            center_points[0][0] = 1;
+            center_points[0][1] = 543;
+            center_points[1][0] = 54;
+            center_points[1][1] = 420;
+            num_columns = 450;
+            if(j == 0) {
+                tx(TX_M, num_points);
+                tx(TX_M, (num_points >> 8));
+                tx(TX_M, num_columns);
+                tx(TX_M, (num_columns >> 8));
+                for(int i = 0; i < num_points && i < POINT_BUFFER_LENGTH; i++) {
+                    for(int j = 0; j < 2; j++) {
+                        tx(TX_M, center_points[i][j]);
+                        tx(TX_M, (center_points[i][j] >> 8));
+                    }
+                }
+            }
+            break;
+
+        case 3: // cam B send your data
+            num_points = 3;
+            center_points[0][0] = 3;
+            center_points[0][1] = 523;
+            center_points[1][0] = 53;
+            center_points[1][1] = 421;
+            center_points[2][0] = 54;
+            center_points[2][1] = 221;
+            num_rows = 45;
+            if(j == 1) {
+                tx(TX_M, num_points);
+                tx(TX_M, (num_points >> 8));
+                tx(TX_M, num_rows);
+                tx(TX_M, (num_rows >> 8));
+                for(int i = 0; i < num_points && i < POINT_BUFFER_LENGTH; i++) {
+                    for(int j = 0; j < 2; j++) {
+                        tx(TX_M, center_points[i][j]);
+                        tx(TX_M, (center_points[i][j] >> 8));
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
+void tx_test(void) {
+    while(1) {
+        tx(TX_M, 100);
+        delay(10e6);
     }
 }
 
@@ -159,7 +358,7 @@ void camera_thread(void) {
 
 int main(void) {
     par {
-        on tile[0]:camera_thread();
+        on tile[0]:slave_thread();
     }
     return 0;
 }

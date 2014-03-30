@@ -232,6 +232,7 @@ void slave_thread(void) {
 
     // uart init
     //uart_init(1e6);
+    uart_init2(9600);
     int c;
 
     //printf("Configuring camera\n");
@@ -251,7 +252,7 @@ void slave_thread(void) {
             // save image 1
             save_image1();
             //printf("Saved Image 1\n");
-            tx(TX_M, 0); // done
+            tx2(TX_M, 0); // done
             break;
         case 1:
             // save image 2
@@ -269,7 +270,7 @@ void slave_thread(void) {
             }
             //printf("num_points: %d\n", num_points);
 
-            tx(TX_M, 0); // done
+            tx2(TX_M, 0); // done
 
 #ifdef DEBUG
             // send to computer
@@ -301,22 +302,27 @@ void slave_thread(void) {
 #endif
             break;
         case 2: // cam A send your data
-            num_points = 2;
-            center_points[0][0] = 1;
-            center_points[0][1] = 543;
-            center_points[1][0] = 54;
-            center_points[1][1] = 420;
-            num_columns = 450;
+            num_points = 40;
+            for(int i = 0; i < num_points; i++) {
+                center_points[i][0] = 0;
+                center_points[i][1] = 0;
+            }
+
+            num_columns = 100;
             if(j == 0) {
-                tx(TX_M, num_points);
-                tx(TX_M, (num_points >> 8));
-                tx(TX_M, num_columns);
-                tx(TX_M, (num_columns >> 8));
+                tx2(TX_M, num_points);
+                tx2(TX_M, (num_points >> 8));
+                tx2(TX_M, num_columns);
+                tx2(TX_M, (num_columns >> 8));
                 for(int i = 0; i < num_points && i < POINT_BUFFER_LENGTH; i++) {
                     for(int j = 0; j < 2; j++) {
-                        tx(TX_M, center_points[i][j]);
-                        tx(TX_M, (center_points[i][j] >> 8));
+                        tx2(TX_M, center_points[i][j]);
+                        tx2(TX_M, (center_points[i][j] >> 8));
                     }
+                }
+                for(int i = 0; i < num_columns && i < MAX_COLUMNS; i++) {
+                    tx2(TX_M, col_idx[i]);
+                    tx2(TX_M, (col_idx[i] >> 8));
                 }
             }
             break;
@@ -329,17 +335,21 @@ void slave_thread(void) {
             center_points[1][1] = 421;
             center_points[2][0] = 54;
             center_points[2][1] = 221;
-            num_rows = 45;
+            num_rows = 450;
             if(j == 1) {
-                tx(TX_M, num_points);
-                tx(TX_M, (num_points >> 8));
-                tx(TX_M, num_rows);
-                tx(TX_M, (num_rows >> 8));
+                tx2(TX_M, num_points);
+                tx2(TX_M, (num_points >> 8));
+                tx2(TX_M, num_rows);
+                tx2(TX_M, (num_rows >> 8));
                 for(int i = 0; i < num_points && i < POINT_BUFFER_LENGTH; i++) {
                     for(int j = 0; j < 2; j++) {
-                        tx(TX_M, center_points[i][j]);
-                        tx(TX_M, (center_points[i][j] >> 8));
+                        tx2(TX_M, center_points[i][j]);
+                        tx2(TX_M, (center_points[i][j] >> 8));
                     }
+                }
+                for(int i = 0; i < num_rows && i < MAX_ROWS; i++) {
+                    tx2(TX_M, row_idx[i]);
+                    tx2(TX_M, (row_idx[i] >> 8));
                 }
             }
             break;

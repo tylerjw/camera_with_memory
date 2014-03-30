@@ -36,7 +36,7 @@ in port VSYNC = on tile[0]:XS1_PORT_1G;
 
 in port JUMPER = on tile[0]:XS1_PORT_1C;
 
-// #define DEBUG
+//#define DEBUG
 
 void clear_points(int the_points[l][2], const static unsigned int l) {
     for(int i = 0; i < l; i++) {
@@ -232,7 +232,7 @@ void slave_thread(void) {
 
     // uart init
     //uart_init(1e6);
-    uart_init2(9600);
+    //uart_init2(9600);
     int c;
 
     //printf("Configuring camera\n");
@@ -270,27 +270,17 @@ void slave_thread(void) {
             }
             //printf("num_points: %d\n", num_points);
 
-            tx2(TX_M, 0); // done
-
 #ifdef DEBUG
             // send to computer
             c = rx(RX);
             tx(TX,0);
-            //printf("Sending image\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
             //sendFilteredImage();
-            //sendImage();
-            sendImage2();
-            //printf("Image Sent\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
-            //printf("Performing handshake\n");
-            //tx(TX,10);
+            sendImage();
+            //sendImage2();
             rx(RX);
             tx(TX,num_points);
-            //rx(RX);
-            //printf("Sending points\n");
+
             for(int i = 0; i < num_points; i++) {
-                //rx(RX);
                 tx(TX, center_points[i][0]);
                 tx(TX, center_points[i][0] >> 8);
                 tx(TX, center_points[i][1]);
@@ -300,15 +290,19 @@ void slave_thread(void) {
             }
             //printf("Done\n");
 #endif
+            tx2(TX_M, 0); // done
             break;
         case 2: // cam A send your data
-            num_points = 40;
+            // demo data
+
+            num_points = 4;
             for(int i = 0; i < num_points; i++) {
                 center_points[i][0] = 0;
                 center_points[i][1] = 0;
             }
 
             num_columns = 100;
+
             if(j == 0) {
                 tx2(TX_M, num_points);
                 tx2(TX_M, (num_points >> 8));
@@ -328,6 +322,8 @@ void slave_thread(void) {
             break;
 
         case 3: // cam B send your data
+            // demo data
+
             num_points = 3;
             center_points[0][0] = 3;
             center_points[0][1] = 523;
@@ -336,6 +332,7 @@ void slave_thread(void) {
             center_points[2][0] = 54;
             center_points[2][1] = 221;
             num_rows = 450;
+
             if(j == 1) {
                 tx2(TX_M, num_points);
                 tx2(TX_M, (num_points >> 8));
@@ -358,8 +355,9 @@ void slave_thread(void) {
 }
 
 void tx_test(void) {
+    //uart_init(9600);
     while(1) {
-        tx(TX_M, 100);
+        tx(TX_M, 'a');
         delay(10e6);
     }
 }
@@ -369,6 +367,7 @@ void tx_test(void) {
 int main(void) {
     par {
         on tile[0]:slave_thread();
+//        on tile[0]:tx_test();
     }
     return 0;
 }

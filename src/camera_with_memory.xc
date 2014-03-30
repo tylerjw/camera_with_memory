@@ -66,32 +66,32 @@ void camera_thread(void) {
     delay(100e6);
     cameraConfig(); // if JUMPER == 1, mirrored
     delay(10e6);
-    c = 4;
+    c = 5;
 
     while(1) {
-//        if(c == 0) {
-//            c = 4;
-//        } else {
-//            c = 0;
-//        }
+        if(c == 5) {
+            c = 0;
+        } else {
+            c++;
+        }
         //c = rx2(RX_M) - (int)'0';
-        c = getchar() - (int)'0';
+        //c = getchar() - (int)'0';
         //printf("\r\n");
         // tx2_str(TX_M, buffer, strlen(buffer));
         //c = 2;
-        //printf("Received: %d\r\n", c);
+        printf("Received: %d\r\n", c);
 
         switch(c) {
         case 0:
             // save image 1
             save_image1();
-            printf("Saved Image 1\r\n");
+            //printf("Saved Image 1\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             break;
         case 1:
             // save image 2
             save_image2();
-            printf("Saved Image 2\r\n");
+            //printf("Saved Image 2\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             break;
         case 2:
@@ -111,34 +111,35 @@ void camera_thread(void) {
 
             num_rows = sort_by_row(center_points, POINT_BUFFER_LENGTH, num_points, row_idx, MAX_ROWS);
 
-            printf("Points Found %d, Columns Found: %d, Rows Found: %d\r\n", num_points, num_columns, num_rows);
-
-            for(int i=0,j=0; i<num_points; i++)
-            {
-                if(i == row_idx[j])
-                  printf("Row %d:\n", j++);
-                printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
-            }
+//            printf("Points Found %d, Columns Found: %d, Rows Found: %d\r\n", num_points, num_columns, num_rows);
+//
+//            for(int i=0,j=0; i<num_points; i++)
+//            {
+//                if(i == row_idx[j])
+//                  printf("Row %d:\n", j++);
+//                printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
+//            }
             break;
         case 3:
             // send to computer
-            c = rx(RX);
+            rx(RX);
             tx(TX,0);
-            printf("Sending image\r\n");
+            //printf("Sending filtered image\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             sendFilteredImage();
+            /*
             //sendImage();
             //sendImage2();
-            printf("Image Sent\r\n");
+            //printf("Image Sent\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
-            printf("num_points = %d\n", num_points);
-            printf("Performing handshake\n");
+//            printf("num_points = %d\n", num_points);
+//            printf("Performing handshake\n");
             //tx(TX,10);
             rx(RX);
             tx(TX,num_points);
             //rx(RX);
-            printf("Sending points\n");
+//            printf("Sending points\n");
             for(int i = 0; i < num_points; i++) {
                 //rx(RX);
                 tx(TX, center_points[i][0]);
@@ -148,28 +149,30 @@ void camera_thread(void) {
                 //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
                 //delay(1e4);
             }
-            printf("Done\n");
+//            printf("Done\n");
+            */
             break;
 
         case 4:
             // send to computer
-            c = rx(RX);
+            rx(RX);
             tx(TX,0);
-            printf("Sending image\r\n");
+            //printf("Sending image 1\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             //sendFilteredImage();
             sendImage();
             //sendImage2();
-            printf("Image Sent\r\n");
+//            printf("Image Sent\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
+            /*
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
-            printf("num_points = %d\n", num_points);
-            printf("Performing handshake\n");
+//            printf("num_points = %d\n", num_points);
+//            printf("Performing handshake\n");
             //tx(TX,10);
             rx(RX);
             tx(TX,num_points);
             //rx(RX);
-            printf("Sending points\n");
+//            printf("Sending points\n");
             for(int i = 0; i < num_points; i++) {
                 //rx(RX);
                 tx(TX, center_points[i][0]);
@@ -179,28 +182,31 @@ void camera_thread(void) {
                 //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
                 //delay(1e4);
             }
-            printf("Done\n");
+//            printf("Done\n");
+
+ */
             break;
 
         case 5:
             // send to computer
-            c = rx(RX);
+            rx(RX);
             tx(TX,0);
-            printf("Sending image\r\n");
+            //printf("Sending image 2\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
             //sendFilteredImage();
             //sendImage();
             sendImage2();
-            printf("Image Sent\r\n");
+//            printf("Image Sent\r\n");
             // tx2_str(TX_M, buffer, strlen(buffer));
+            /*
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
-            printf("num_points = %d\n", num_points);
-            printf("Performing handshake\n");
+//            printf("num_points = %d\n", num_points);
+//            printf("Performing handshake\n");
             //tx(TX,10);
             rx(RX);
             tx(TX,num_points);
             //rx(RX);
-            printf("Sending points\n");
+//            printf("Sending points\n");
             for(int i = 0; i < num_points; i++) {
                 //rx(RX);
                 tx(TX, center_points[i][0]);
@@ -210,11 +216,13 @@ void camera_thread(void) {
                 //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
                 //delay(1e4);
             }
-            printf("Done\n");
+//            printf("Done\n");
+
+ */
             break;
         }
 
-        clear_points(center_points, POINT_BUFFER_LENGTH);
+        //clear_points(center_points, POINT_BUFFER_LENGTH);
     }
 }
 
@@ -231,7 +239,8 @@ void slave_thread(void) {
     //char buffer[80];
 
     // uart init
-    //uart_init(1e6);
+    //
+    uart_init(1e6);
     uart_init2(9600);
     int c;
 
@@ -295,7 +304,6 @@ void slave_thread(void) {
             tx2(TX_M, 0); // done
             break;
         case 2: // cam A send your data
-            addr <: 0;
             // demo data
 
 //            num_points = 4;
@@ -369,7 +377,7 @@ void tx_test(void) {
 
 int main(void) {
     par {
-        on tile[0]:slave_thread();
+        on tile[0]:camera_thread();
 //        on tile[0]:tx_test();
     }
     return 0;

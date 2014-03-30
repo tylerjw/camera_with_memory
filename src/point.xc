@@ -127,10 +127,10 @@ int point_finder(int center_points[length][2], static const unsigned int length)
   int left, right;
   // outdoor test 25,10
   // indoor test 40,10
-  const int threshold_C = 100; // 40
-  const int threshold2_C = 80; // 10
+  const int threshold_C = 10; // 40
+  const int threshold2_C = 10; // 10
   const int min_width_C = 1;
-  static int point_multiplier = 1;
+  static int point_multiplier = 5;
   struct Point points[length];
   const int unused_C = 0;
   const int active_C = 1;

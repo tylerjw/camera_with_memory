@@ -238,6 +238,10 @@ void cameraConfig() {
     i2c_master_write_reg(0x21,0x12,data,1,i2c_if);
     data[0] = 0xC0; // default 16bit mode
     i2c_master_write_reg(0x21,0x40,data,1,i2c_if);
+//    data[0] = 0x00; // default 16bit mode
+//    i2c_master_write_reg(0x21,0x00,data,1,i2c_if);
+//    data[0] = 0x13; // manual gain
+//    i2c_master_write_reg(0x21,0x74,data,1,i2c_if);
     ///////////end clock setup
     if(j == 1) {
         configureMirroredImage();
@@ -304,7 +308,7 @@ void reset(void) {
     int time;
     t :> time;
     cam_oe_we <: 0;
-    time += 1000 * 1000;
+    time += 1000 * 1000 * 2;
     t when timerafter(time) :> void;
     cam_oe_we <: CAMON;
 }

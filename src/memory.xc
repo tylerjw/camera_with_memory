@@ -7,6 +7,7 @@
 #include <memory.h>
 #include <platform.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <xs1.h>
 #include <uart.h>
 
@@ -320,7 +321,7 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
     mem2_read_init();
     no_dots = mem_read_byte(location+i);
     if(no_dots > dots) {
-      result[i] = 0;
+      result[i] = no_dots - dots;
     } else {
       result[i] = dots - no_dots;
     }

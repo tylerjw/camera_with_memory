@@ -241,8 +241,8 @@ void cameraConfig() {
     i2c_master_write_reg(0x21,0x40,data,1,i2c_if);
 //    data[0] = 0x00; // default 16bit mode
 //    i2c_master_write_reg(0x21,0x00,data,1,i2c_if);
-    data[0] = 0x13; // manual gain
-    i2c_master_write_reg(0x21,0x74,data,1,i2c_if);
+//    data[0] = 0x13; // manual gain
+//    i2c_master_write_reg(0x21,0x74,data,1,i2c_if);
     ///////////end clock setup
     if(j == 1) {
         configureMirroredImage();

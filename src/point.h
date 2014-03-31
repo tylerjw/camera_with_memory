@@ -15,10 +15,10 @@
 #define XVAL(idx) (idx%WIDTH)
 #define YVAL(idx) (idx/WIDTH)
 
-#define THRESHOLD 10  // threshold for point test
-#define MIN_SIZE  5
-#define MAX_SIZE  (30*30)
-#define MIN_SKEW  -30
+#define THRESHOLD 10  // threshold for point test, how far can test line be from point center to be part of same point
+#define MIN_SIZE  5     // how small can a point be (pixels)
+#define MAX_SIZE  (30*30) // how big can a point be (pixels) - not used
+#define MIN_SKEW  -30   // how oblong can a point be - not used
 #define MAX_SKEW  30
 
 #define COL_THRESHOLD 20  // threshold for being in the same column

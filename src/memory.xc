@@ -313,8 +313,6 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
   int median;
   int x1;
   int large, small;
-  timer t;
-  int time;
 
   mem1_read_init();
   for(int i = 0; i < width; i++) {
@@ -331,10 +329,6 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
       result[i] = 0;//no_dots - dots;
     } else {
       result[i] = dots[i] - no_dots[i];
-    }
-
-    if(line_number == 0 && i < 20) {
-        printf("%d - %d = %d\n",dots[i], no_dots[i], result[i]);
     }
 
     // median filter
@@ -360,6 +354,4 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
         result[i] = median;
     }
   }
-  if(line_number == 0)
-      printf("\n");
 }

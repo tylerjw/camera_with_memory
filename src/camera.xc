@@ -42,12 +42,6 @@ void sendFilteredImage(){
 
             tx(TX,working_line[x]);
         }
-        if(y == 0) {
-            for(int i = 0; i < 20; i++) {
-                printf("%d\t",working_line[i]);
-            }
-            printf("\n");
-        }
     }
 }
 
@@ -61,12 +55,6 @@ void sendImage(){
             location++;
 
             tx(TX,c);
-            if(y == 0 && x < 20) {
-                printf("%d\t",c);
-            }
-        }
-        if(y == 0) {
-            printf("\n");
         }
     }
 }
@@ -81,12 +69,6 @@ void sendImage2(){
             location++;
 
             tx(TX,c);
-            if(y == 0 && x < 20) {
-                printf("%d\t",c);
-            }
-        }
-        if(y == 0) {
-            printf("\n");
         }
 
     }

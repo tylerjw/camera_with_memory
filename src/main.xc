@@ -42,7 +42,7 @@ void extern tx_test(void);
 
 int main(void) {
     par {
-        on tile[0]:console_input_thread();
+        on tile[0]:slave_thread();
     }
     return 0;
 }

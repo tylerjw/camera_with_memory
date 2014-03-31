@@ -57,8 +57,6 @@ void console_input_thread(void) {
 
         //c = rx2(RX_M) - (int)'0';
         c = getchar() - (int)'0';
-        //printf("\r\n");
-        // tx2_str(TX_M, buffer, strlen(buffer));
         //c = 2;
         //printf("Received: %d\r\n", c);
 
@@ -67,13 +65,11 @@ void console_input_thread(void) {
             // save image 1
             save_image1();
             //printf("Saved Image 1\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
             break;
         case 1:
             // save image 2
             save_image2();
             //printf("Saved Image 2\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
             break;
         case 2:
             // find points and columns
@@ -105,104 +101,53 @@ void console_input_thread(void) {
             // send to computer
             rx(RX);
             tx(TX,0);
-            //printf("Sending filtered image\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
             sendFilteredImage();
-            /*
-            //sendImage();
-            //sendImage2();
-            //printf("Image Sent\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
-//            printf("num_points = %d\n", num_points);
-//            printf("Performing handshake\n");
-            //tx(TX,10);
             rx(RX);
             tx(TX,num_points);
-            //rx(RX);
-//            printf("Sending points\n");
             for(int i = 0; i < num_points; i++) {
-                //rx(RX);
                 tx(TX, center_points[i][0]);
                 tx(TX, center_points[i][0] >> 8);
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
-                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
-                //delay(1e4);
             }
-//            printf("Done\n");
-            */
+
             break;
 
         case 4:
             // send to computer
             rx(RX);
             tx(TX,0);
-            //printf("Sending image 1\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
-            //sendFilteredImage();
             sendImage();
-            //sendImage2();
-//            printf("Image Sent\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
-            /*
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
-//            printf("num_points = %d\n", num_points);
-//            printf("Performing handshake\n");
-            //tx(TX,10);
             rx(RX);
             tx(TX,num_points);
-            //rx(RX);
-//            printf("Sending points\n");
             for(int i = 0; i < num_points; i++) {
-                //rx(RX);
                 tx(TX, center_points[i][0]);
                 tx(TX, center_points[i][0] >> 8);
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
-                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
-                //delay(1e4);
             }
-//            printf("Done\n");
 
- */
+
             break;
 
         case 5:
             // send to computer
             rx(RX);
             tx(TX,0);
-            //printf("Sending image 2\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
-            //sendFilteredImage();
-            //sendImage();
             sendImage2();
-//            printf("Image Sent\r\n");
-            // tx2_str(TX_M, buffer, strlen(buffer));
-            /*
+
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
-//            printf("num_points = %d\n", num_points);
-//            printf("Performing handshake\n");
-            //tx(TX,10);
             rx(RX);
             tx(TX,num_points);
-            //rx(RX);
-//            printf("Sending points\n");
             for(int i = 0; i < num_points; i++) {
-                //rx(RX);
                 tx(TX, center_points[i][0]);
                 tx(TX, center_points[i][0] >> 8);
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
-                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
-                //delay(1e4);
             }
-//            printf("Done\n");
-
- */
             break;
         }
-
-        //clear_points(center_points, POINT_BUFFER_LENGTH);
     }
 }

@@ -127,8 +127,8 @@ int point_finder(int center_points[length][2], static const unsigned int length)
   int left, right;
   // outdoor test 25,10
   // indoor test 40,10
-  const int threshold_C = 40; // 40
-  const int threshold2_C = 10; // 10
+  const int threshold_C = 80; // 40
+  const int threshold2_C = 40; // 10
   const int min_width_C = 1;
   static int point_multiplier = 1;
   struct Point points[length];
@@ -244,11 +244,11 @@ int point_finder(int center_points[length][2], static const unsigned int length)
   printf("Right Point: %d, duplicates: %d, multiplier: %d\n", right_point, duplicates, point_multiplier);
   printf("score: %d\n", score);
 
-  if(num_centers < 10 && point_multiplier < 5) {
-      point_multiplier++;
-  } else if(num_centers > 30 && point_multiplier > 1) {
-      point_multiplier--;
-  }
+//  if(num_centers < 10 && point_multiplier < 5) {
+//      point_multiplier++;
+//  } else if(num_centers > 30 && point_multiplier > 1) {
+//      point_multiplier--;
+//  }
 
   return num_centers;
 }

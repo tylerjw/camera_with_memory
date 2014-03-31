@@ -51,7 +51,7 @@ void tx2_str(out port TX, char str[n], unsigned int n) {
     }
 }
 
-void tx2(out port TX, char byte){
+void tx2(out port TX, unsigned char byte){
     timer t;
     int time;
     t :> time;

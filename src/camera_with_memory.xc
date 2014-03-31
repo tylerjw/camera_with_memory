@@ -54,6 +54,8 @@ void camera_thread(void) {
     int col_idx[MAX_COLUMNS];
     int num_rows = 0;
     int row_idx[MAX_ROWS];
+    timer t;
+    int time;
 
     //char buffer[80];
 
@@ -66,20 +68,26 @@ void camera_thread(void) {
     delay(100e6);
     cameraConfig(); // if JUMPER == 1, mirrored
     delay(10e6);
-    c = 5;
+
+    t :> time;
 
     while(1) {
-        if(c == 5) {
-            c = 0;
-        } else {
-            c++;
-        }
+//        c = 0;
+//
+//        select {
+//            case t when timerafter(time) :> time:
+//                time+= 10e8;
+//                c = 4;
+//                break;
+//            default:
+//                break;
+//        }
         //c = rx2(RX_M) - (int)'0';
-        //c = getchar() - (int)'0';
+        c = getchar() - (int)'0';
         //printf("\r\n");
         // tx2_str(TX_M, buffer, strlen(buffer));
         //c = 2;
-        printf("Received: %d\r\n", c);
+        //printf("Received: %d\r\n", c);
 
         switch(c) {
         case 0:

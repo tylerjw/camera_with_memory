@@ -308,22 +308,33 @@ void mem_read(unsigned int start_addr, unsigned char buffer[n], unsigned int n) 
 void read_filtered_line(unsigned char result[width], static const unsigned int width, int line_number) {
   int i;
   int location = line_number * width;
-  unsigned char dots;
-  unsigned char no_dots;
+  unsigned char dots[width];
+  unsigned char no_dots[width];
   int median;
   int x1;
   int large, small;
+  timer t;
+  int time;
+
+  mem1_read_init();
+  for(int i = 0; i < width; i++) {
+      dots[i] = mem_read_byte(location+i);
+  }
+  mem2_read_init();
+  for(int i = 0; i < width; i++) {
+      no_dots[i] = mem_read_byte(location+i);
+  }
 
   // build the result array
   for(i = 0; i < width; i++) {
-    mem1_read_init();
-    dots = mem_read_byte(location+i);
-    mem2_read_init();
-    no_dots = mem_read_byte(location+i);
-    if(no_dots > dots) {
-      result[i] = no_dots - dots;
+    if(no_dots[i] > dots[i]) {
+      result[i] = 0;//no_dots - dots;
     } else {
-      result[i] = dots - no_dots;
+      result[i] = dots[i] - no_dots[i];
+    }
+
+    if(line_number == 0 && i < 20) {
+        printf("%d - %d = %d\n",dots[i], no_dots[i], result[i]);
     }
 
     // median filter
@@ -349,4 +360,6 @@ void read_filtered_line(unsigned char result[width], static const unsigned int w
         result[i] = median;
     }
   }
+  if(line_number == 0)
+      printf("\n");
 }

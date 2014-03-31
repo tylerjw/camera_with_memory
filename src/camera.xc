@@ -34,13 +34,19 @@ void delay(int delay){
 }
 
 void sendFilteredImage(){
-    unsigned char working_line[640];
+    unsigned char working_line[PICWIDTH];
 
     for(int y = 0; y < PICHEIGHT; y++){
-        read_filtered_line(working_line, 640, y);
+        read_filtered_line(working_line, PICWIDTH, y);
         for(int x = 0; x < PICWIDTH; x++){
 
             tx(TX,working_line[x]);
+        }
+        if(y == 0) {
+            for(int i = 0; i < 20; i++) {
+                printf("%d\t",working_line[i]);
+            }
+            printf("\n");
         }
     }
 }
@@ -55,6 +61,12 @@ void sendImage(){
             location++;
 
             tx(TX,c);
+            if(y == 0 && x < 20) {
+                printf("%d\t",c);
+            }
+        }
+        if(y == 0) {
+            printf("\n");
         }
     }
 }
@@ -69,7 +81,14 @@ void sendImage2(){
             location++;
 
             tx(TX,c);
+            if(y == 0 && x < 20) {
+                printf("%d\t",c);
+            }
         }
+        if(y == 0) {
+            printf("\n");
+        }
+
     }
 }
 
@@ -240,8 +259,8 @@ void cameraConfig() {
     i2c_master_write_reg(0x21,0x40,data,1,i2c_if);
 //    data[0] = 0x00; // default 16bit mode
 //    i2c_master_write_reg(0x21,0x00,data,1,i2c_if);
-//    data[0] = 0x13; // manual gain
-//    i2c_master_write_reg(0x21,0x74,data,1,i2c_if);
+    data[0] = 0x13; // manual gain
+    i2c_master_write_reg(0x21,0x74,data,1,i2c_if);
     ///////////end clock setup
     if(j == 1) {
         configureMirroredImage();

@@ -14,6 +14,7 @@
 #include <string.h>
 #include <uart.h>
 
+//#define DEBUG // for output to computer
 
 #define POINT_BUFFER_LENGTH   300
 #define MAX_COLUMNS           30
@@ -83,8 +84,8 @@ void slave_thread(void) {
             // send to computer
             c = rx(RX);
             tx(TX,0);
-            //sendFilteredImage();
-            sendImage();
+            sendFilteredImage();
+            //sendImage();
             //sendImage2();
             rx(RX);
             tx(TX,num_points);
@@ -94,10 +95,7 @@ void slave_thread(void) {
                 tx(TX, center_points[i][0] >> 8);
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
-                //printf("(%d,%d)\r\n", center_points[i][0], center_points[i][1]);
-                //delay(1e4);
             }
-            //printf("Done\n");
 #endif
             tx2(TX_M, 0); // done
             break;

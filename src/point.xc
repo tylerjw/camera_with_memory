@@ -241,8 +241,8 @@ int point_finder(int center_points[length][2], static const unsigned int length)
       }
     }
   }
-  printf("Right Point: %d, duplicates: %d, multiplier: %d\n", right_point, duplicates, point_multiplier);
-  printf("score: %d\n", score);
+//  printf("Right Point: %d, duplicates: %d, multiplier: %d\n", right_point, duplicates, point_multiplier);
+//  printf("score: %d\n", score);
 
 //  if(num_centers < 10 && point_multiplier < 5) {
 //      point_multiplier++;

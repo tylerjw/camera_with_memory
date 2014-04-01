@@ -9,9 +9,9 @@
 #include <xs1.h>
 #include <uart.h>
 
-int UARTDELAY = 10417; // 9600 baud ( 1 / baud * 100e6 )
+//int UARTDELAY = 10417; // 9600 baud ( 1 / baud * 100e6 )
 int UARTDELAY2 = 10417;
-//int UARTDELAY = 100; // 1 mil
+int UARTDELAY = 100; // 1 mil
 
 void uart_init(int baud) {
     UARTDELAY = (100e6 / baud);

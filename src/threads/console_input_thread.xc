@@ -45,13 +45,13 @@ void console_input_thread(void) {
     uart_init(1e6);
     int c;
 
-//    printf("Resetting the Camera\n");
-//    // camera init
-//    reset();
-//    delay(100e6);
-//    cameraConfig(); // if JUMPER == 1, mirrored
-//    delay(10e6);
-//    printf("Send input\n");
+    printf("Resetting the Camera\n");
+    // camera init
+    reset();
+    delay(100e6);
+    cameraConfig(); // if JUMPER == 1, mirrored
+    delay(10e6);
+    printf("Send input\n");
 
     t :> time;
 
@@ -60,7 +60,7 @@ void console_input_thread(void) {
         //c = rx2(RX_M) - (int)'0';
         c = getchar() - (int)'0';
         //c = 2;
-        printf("Received: %d\r\n", c);
+        //printf("Received: %d\r\n", c);
 
         switch(c) {
         case 0:
@@ -113,8 +113,7 @@ void console_input_thread(void) {
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
             }
-            printf("%d\n", num_points);
-
+            printf("points: %d\n", num_points);
             break;
 
         case 4:
@@ -131,8 +130,7 @@ void console_input_thread(void) {
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
             }
-
-
+            printf("points: %d\n", num_points);
             break;
 
         case 5:
@@ -140,7 +138,6 @@ void console_input_thread(void) {
             rx(RX);
             tx(TX,0);
             sendImage2();
-
             num_points = point_finder(center_points, POINT_BUFFER_LENGTH);
             rx(RX);
             tx(TX,num_points);
@@ -150,6 +147,7 @@ void console_input_thread(void) {
                 tx(TX, center_points[i][1]);
                 tx(TX, center_points[i][1] >> 8);
             }
+            printf("points: %d\n", num_points);
             break;
         }
     }

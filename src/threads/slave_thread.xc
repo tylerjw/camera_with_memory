@@ -38,7 +38,6 @@ void slave_thread(void) {
     //char buffer[80];
 
     // uart init
-    //
     uart_init(1e6);
     uart_init2(9600);
     int c;

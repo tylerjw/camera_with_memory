@@ -96,8 +96,9 @@ void slave_thread(void) {
                 tx(TX, center_points[i][1] >> 8);
             }
 #endif
-            tx2(TX_M, 0); // done
+            tx2(TX_M, (j+1)); // done
             break;
+
         case 2: // cam A send your data
             // demo data
 
@@ -108,22 +109,30 @@ void slave_thread(void) {
 //            }
 //
 //            num_columns = 4;
+            printf("c: %d, j: %d\n", c, j);
 
             if(j == 0) {
+                int pc = 0;
+                int ic = 0;
                 tx2(TX_M, num_points);
                 tx2(TX_M, (num_points >> 8));
                 tx2(TX_M, num_columns);
                 tx2(TX_M, (num_columns >> 8));
                 for(int i = 0; i < num_points && i < POINT_BUFFER_LENGTH; i++) {
                     for(int j = 0; j < 2; j++) {
+                        delay(100);
                         tx2(TX_M, (char)center_points[i][j]);
                         tx2(TX_M, (char)(center_points[i][j] >> 8));
                     }
+                    pc++;
                 }
                 for(int i = 0; i < num_columns && i < MAX_COLUMNS; i++) {
                     tx2(TX_M, col_idx[i]);
                     tx2(TX_M, (col_idx[i] >> 8));
+                    ic++;
                 }
+                printf("%d, %d\n", pc, ic);
+                printf("%d, num_col: %d\n", num_points, num_columns);
             }
             break;
 
@@ -138,6 +147,8 @@ void slave_thread(void) {
 //            center_points[2][0] = 54;
 //            center_points[2][1] = 221;
 //            num_rows = 1;
+
+            printf("c: %d, j: %d\n", c, j);
 
             if(j == 1) {
                 tx2(TX_M, num_points);
@@ -154,6 +165,7 @@ void slave_thread(void) {
                     tx2(TX_M, row_idx[i]);
                     tx2(TX_M, (row_idx[i] >> 8));
                 }
+                printf("%d, num_rows: %d\n",num_points, num_rows);
             }
             break;
         }

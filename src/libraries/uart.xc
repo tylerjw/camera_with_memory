@@ -65,7 +65,7 @@ void tx2(out port TX, unsigned char byte){
     time += UARTDELAY2;
     t when timerafter(time) :> void;
     TX <: 1; //stop bit
-    time += UARTDELAY2;
+    time += UARTDELAY2*2;
     t when timerafter(time) :> void; // in case you run it twice in a row
 }
 

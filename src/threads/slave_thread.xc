@@ -109,7 +109,7 @@ void slave_thread(void) {
 //            }
 //
 //            num_columns = 4;
-            printf("c: %d, j: %d\n", c, j);
+            //printf("c: %d, j: %d\n", c, j);
 
             if(j == 0) {
                 int pc = 0;
@@ -131,8 +131,8 @@ void slave_thread(void) {
                     tx2(TX_M, (col_idx[i] >> 8));
                     ic++;
                 }
-                printf("%d, %d\n", pc, ic);
-                printf("%d, num_col: %d\n", num_points, num_columns);
+//                printf("%d, %d\n", pc, ic);
+//                printf("%d, num_col: %d\n", num_points, num_columns);
             }
             break;
 
